@@ -102,6 +102,7 @@ module.exports.userController = {
         id: candidate._id,
         email: candidate.email,
         roles: candidate.roles,
+        basket: basket._id
       };
       const token = await jsonwebtoken.sign(payload, process.env.SECRET_JWT_KEY, {
         expiresIn: "24h",

@@ -5,7 +5,7 @@ module.exports.basketController = {
   // ВЫВОД КОРЗИНЫ
   getBusketByUser: async (req, res) => {
     try {
-      const data = await Basket.findOne({ userId: req.params.id });
+      const data = await Basket.findOne({ userId: req.user.id });
       return res.json(data);
     } catch (error) {
       res.json({ error: error.message });
@@ -35,12 +35,12 @@ module.exports.basketController = {
       // НАХОДИМ НАШ ЭЛЕМЕНТ И МЕНЯЕМ АМОУНТ НА + 1, И СОХРАНЯЕМ НОВЫЙ МАССИВ В НАШУ ПЕРЕМЕННУЮ
       const newData = await basket.products.map((item) => {
         if (
-          item._id.toString() === req.body.productId.toString() &&
+          item.productId.toString() === req.body.productId.toString() &&
           type === "plus"
         ) {
           item.amount += 1;
         } else if (
-          item._id.toString() === req.body.productId.toString() &&
+          item.productId.toString() === req.body.productId.toString() &&
           type === "minus"
         ) {
           item.amount -= 1;
