@@ -5,7 +5,7 @@ module.exports.basketController = {
   // ВЫВОД КОРЗИНЫ
   getBusketByUser: async (req, res) => {
     try {
-      const data = await Basket.findOne({ userId: req.params.id });
+      const data = await Basket.findOne({ userId: req.user.id });
       return res.json(data);
     } catch (error) {
       res.json({ error: error.message });
@@ -29,18 +29,18 @@ module.exports.basketController = {
   editAmount: async (req, res) => {
     try {
       // НАХОДИМ НАШУ КОРЗИНУ
-      const basket = await Basket.findById(req.params.id);
+      const basket = await Basket.findById(req.user.basket);
       const type = req.body.type;
 
       // НАХОДИМ НАШ ЭЛЕМЕНТ И МЕНЯЕМ АМОУНТ НА + 1, И СОХРАНЯЕМ НОВЫЙ МАССИВ В НАШУ ПЕРЕМЕННУЮ
       const newData = await basket.products.map((item) => {
         if (
-          item._id.toString() === req.body.productId.toString() &&
+          item.productId.toString() === req.params.id.toString() &&
           type === "plus"
         ) {
           item.amount += 1;
         } else if (
-          item._id.toString() === req.body.productId.toString() &&
+          item.productId.toString() === req.params.id.toString() &&
           type === "minus"
         ) {
           item.amount -= 1;
@@ -59,9 +59,9 @@ module.exports.basketController = {
   // УДАЛЕНИЕ ТОВАРА ИЗ КОРЗИНЫ
   deleteBasket: async (req, res) => {
     try {
-      const data = await Basket.findByIdAndUpdate(req.params.id, {
+      const data = await Basket.findByIdAndUpdate(req.user.basket, {
         $pull: {
-          products: { _id: req.body.productId },
+          products: { productId: req.params.id },
         },
       });
       res.json(data);
